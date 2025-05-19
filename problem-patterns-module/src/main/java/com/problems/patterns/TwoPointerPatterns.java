@@ -1,8 +1,10 @@
 package com.problems.patterns;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import com.problems.patterns.crossdomains.ClosestNumberPatterns;
@@ -14,13 +16,14 @@ public class TwoPointerPatterns {
 	// Two Sum: Given an array of integers, return indices of the two numbers such that they add up to a specific target.
 	// 1. Brute force approach: Time Complexity:(n^2)
 	public int[] twoSum1(int[] nums, int target) {
-		int[] result = new int[2];
+		int[] result = new int[] { 1, 2 };
 		for (int i = 0; i < nums.length - 1; i++) {
 			result[0] = i;
 			for (int j = i + 1; j < nums.length; j++) {
 				if (nums[i] + nums[j] == target) {
 					result[1] = j;
-					return result;
+					//return result;
+					return new int[] { i, j };
 				}
 			}
 		}
@@ -70,7 +73,7 @@ public class TwoPointerPatterns {
 		int[] result = new int[2];
 		Arrays.fill(result, -1);
 		Map<Integer, Integer> map = new HashMap<>(); // Value, Index
-		for (int i = 0; i < nums.length - 1; i++) {
+		for (int i = 0; i < nums.length; i++) {
 			if (map.get(nums[i]) != null) {
 				result[0] = map.get(nums[i]);
 				result[1] = i;
@@ -108,8 +111,19 @@ public class TwoPointerPatterns {
 
 		// 2. Take element one by one from 0th the index
 		for (int i = 0; i < n - 2; i++) {
+
 			// 3. Find remaining two elements using two ptr alg
-			if (sumPresent1(a, i + 1, n - 1, a[i], sum - a[i])) return true;
+			int l = i + 1, h = n - 1;
+			while (l < h) {
+				int currVal = a[i] + a[l] + a[h];
+				if (currVal == sum) {
+					return true;
+				} else if (currVal > sum) {
+					h--;
+				} else {
+					l++;
+				}
+			}
 		}
 
 		return false;
@@ -122,40 +136,52 @@ public class TwoPointerPatterns {
 		// 1. Take element one by one from 0th the index
 		for (int i = 0; i < n - 2; i++) {
 			// 3. Find remaining two elements using hash DS
-			if (sumPresent2(a, i + 1, n - 1, a[i], sum - a[i])) return true;
-		}
-
-		return false;
-	}
-
-	// Using 2 ptr approach
-	public boolean sumPresent1(int[] nums, int l, int h, int firstValue, int target) {
-		while (l < h) {
-			if (nums[l] + nums[h] == target) {
-				System.out.println("The Triplet is: " + firstValue + ", " + nums[l] + ", " + nums[h]);
-				return true;
-			} else if (nums[l] + nums[h] > target) {
-				h--;
-			} else {
-				l++;
+			//if (sumPresent2(a, i + 1, n - 1, a[i], sum - a[i])) return true;
+			HashSet<Integer> set = new HashSet<>();
+			for (int j = i + 1; j <= n - 1; i++) {
+				if (set.contains(sum - a[i] - a[j])) {
+					return true;
+				} else {
+					set.add(a[j]);
+				}
 			}
 		}
 
 		return false;
 	}
 
-	public boolean sumPresent2(int[] nums, int l, int h, int firstValue, int target) {
-		HashSet<Integer> set = new HashSet<>();
+	/*
+	 * Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+	 * Notice that the solution set must not contain duplicate triplets.
+	 * Example 1:
+	 * Input: nums = [-1,0,1,2,-1,-4], Output: [[-1,-1,2],[-1,0,1]]
+	 */
+	public List<List<Integer>> threeSum(int[] nums) {
+		List<List<Integer>> triplets = new ArrayList<>();
+		if (nums.length < 3) return triplets;
 
-		for (int i = l; i <= h; i++) {
-			if (set.contains(target - nums[i])) {
-				System.out.println("The Triplet is: " + firstValue + ", " + (target - nums[i]) + ", " + nums[i]);
-				return true;
-			} else {
-				set.add(nums[i]);
+		Arrays.sort(nums);
+		for (int i = 0; i < nums.length - 2; i++) {
+			if (i > 0 && nums[i] == nums[i - 1]) continue;
+
+			int l = i + 1, h = nums.length - 1;
+			while (l < h) {
+				int sum = nums[i] + nums[l] + nums[h];
+				if (sum == 0) {
+					triplets.add(Arrays.asList(nums[i], nums[l], nums[h]));
+					while (l < h && nums[l] == nums[l + 1]) l++;
+					while (l < h && nums[h] == nums[h - 1]) h--;
+					l++;
+					h--;
+				} else if (sum < 0) {
+					l++;
+				} else {
+					h--;
+				}
 			}
 		}
-		return false;
+
+		return triplets;
 	}
 
 	ClosestNumberPatterns closestNumberPatterns = new ClosestNumberPatterns();

@@ -119,6 +119,7 @@ public class QuickSelectPatterns {
 	 *  Eg: Input : -12, 11, -13, -5, 6, -7, 5, -3, -6; Output :-12 -13 -5 -7 -3 -6 11 6 5
 	 */
 	/*
+	 * Stable sorting algorithm is needed to maintain the order.
 	 * Solution1: A simple solution is to use another array. We copy all elements of original array to new array. We then traverse 
 	 * the new array and copy all negative and positive elements back in original array one by one. Time: O(n^2); Space O(n)
 	 * Solution2: Using Insertion Sort; Time: O(n^2); Space O(1)

@@ -28,6 +28,12 @@ import com.common.utilities.Utils;
  *  Transform and Conquer: Heap Sort
  *  
  * Stable Vs Unstable Sorting:
+ * A stable sort maintains the relative order of records with equal keys (values).Eg: Bubble Sort, Insertion Sort, Merge Sort
+ * An unstable sort does not guarantee the relative order of equal elements. Eg: Quick Sort, Heap Sort
+ * When Does Stability Matter? When sorting complex data with multiple fields (e.g., sort by last name, then first name).
+ * 
+ * Practice Sorting Algorithm here - https://leetcode.com/problems/sort-an-array/
+ * 
  */
 public class SortingAlgorithms implements SortOperations {
 
@@ -261,7 +267,6 @@ public class SortingAlgorithms implements SortOperations {
 	@Override
 	public void insertionSort(ListNode head) {
 		// TODO Auto-generated method stub
-
 	}
 	// Insertion - end
 
@@ -269,6 +274,9 @@ public class SortingAlgorithms implements SortOperations {
 	/*
 	 * Merge sort is a divide-and-conquer algorithm based on the idea of breaking down a list into several sub-lists until each sublist
 	 * consists of a single element and merging those sublists in a manner that results into a sorted list.
+	 * Time Complexity: O(n log n) (worst, average, and best case)
+	 * Space Complexity: O(n) (not in-place)
+	 * Stable: Yes (Means =)
 	 */
 	@Override
 	public void mergeSort(int[] a) {
@@ -437,8 +445,10 @@ public class SortingAlgorithms implements SortOperations {
 	 * Quick sort is based on the divide-and-conquer approach based on the idea of choosing one element as a pivot element and 
 	 * partitioning the array around it such that: Left side of pivot contains all the elements that are less than the pivot element
 	 * Right side contains all elements greater than the pivot
-	 * 
 	 * Quick Sort is fast because that algorithm is randomized.
+	 * 
+	 * Time Complexity: Best/Average: O(n log n), Worst: O(n^2) (if pivot choice is poor) 
+	 * Space Complexity: O(log n) (due to recursion)
 	 */
 	public void quickSort(int[] a) {
 		qSort(a, 0, a.length - 1);
@@ -467,9 +477,15 @@ public class SortingAlgorithms implements SortOperations {
 	}
 	// Quick sort - end
 
-	// Heap sort - start
-	// O(n) time for buildHeap and O(n log n) to remove each node in order, so the
-	// complexity is O(n log n).
+	/* Heap sort - start
+	 * O(n) time for buildHeap and O(n log n) to remove each node in order, so the complexity is O(n log n).
+	 * Time Complexity: O(n log n) (worst, average, and best case)
+	 * Space Complexity: Space Complexity: O(1) (Iterative Approach in-place), Space Complexity: O(log n) (due to recursion)
+	 * Stable: No
+	 * Asc Order - Builds a max heap(MaxHeapify) and repeatedly extracts the maximum element., 
+	 * Desc Order - Builds a min heap(MinHeapify) and repeatedly extracts the minimum element.
+	 * 
+	 */
 	public void heapSort(int[] a) {
 		int size = a.length;
 		// Build heapify the given array - O(n) time for buildHeap
@@ -480,25 +496,47 @@ public class SortingAlgorithms implements SortOperations {
 		for (int i = size - 1; i >= 0; i--) { // Time complexity: maxheapify for n times, its o(nlog(n))
 			Utils.swap(a, 0, i); // Move max element (current root) to end
 			maxHeapify(a, 0, i); // call max heapify on the reduced heap
+			//maxHeapifyIterative(a, 0, i);
 		}
 	}
 
 	// Heapify/Shift Down:
 	// Time complexity for maxheapify is o(log(n))
 	private void maxHeapify(int[] a, int startIndex, int size) {
-		int left = 2 * startIndex + 1; // left child
-		int right = 2 * startIndex + 2; // right child
-		int largest = startIndex; // Initialize largest as root
+		int leftIndex = 2 * startIndex + 1; // left child
+		int rightIndex = 2 * startIndex + 2; // right child
+		int parentIndex = startIndex; // Assume parent is the largest
 
-		if (left < size && a[left] > a[largest]) // Check left child with parent
-			largest = left;
+		if (leftIndex < size && a[leftIndex] > a[parentIndex]) // Check left child with parent
+			parentIndex = leftIndex;
 
-		if (right < size && a[right] > a[largest]) // Check right child with parent
-			largest = right;
+		if (rightIndex < size && a[rightIndex] > a[parentIndex]) // Check right child with parent
+			parentIndex = rightIndex;
 
-		if (largest != startIndex) { // Swap if largest element index changes
-			Utils.swap(a, largest, startIndex);
-			maxHeapify(a, largest, size);
+		if (parentIndex != startIndex) {
+			Utils.swap(a, parentIndex, startIndex); // Swap and continue heapifying
+			maxHeapify(a, parentIndex, size); // Move down to the child node
+		}
+	}
+
+	public static void maxHeapifyIterative(int[] a, int startIndex, int size) {
+		while (true) {
+			int leftIndex = 2 * startIndex + 1; // left child
+			int rightIndex = 2 * startIndex + 2; // right child
+			int parentIndex = startIndex; // Assume parent is the largest
+
+			if (leftIndex < size && a[leftIndex] > a[parentIndex]) // Check left child with parent
+				parentIndex = leftIndex;
+
+			if (rightIndex < size && a[rightIndex] > a[parentIndex]) // Check right child with parent
+				parentIndex = rightIndex;
+
+			if (parentIndex != startIndex) {
+				Utils.swap(a, parentIndex, startIndex); // Swap and continue heapifying
+				startIndex = parentIndex; // Move down to the child node
+			} else {
+				break; // Heap property is satisfied
+			}
 		}
 	}
 
@@ -663,4 +701,3 @@ public class SortingAlgorithms implements SortOperations {
 	}
 
 }
-

@@ -24,7 +24,7 @@ public class SlidingWindowArrayPatterns {
 
 		subarrayProductMax(arr);
 
-		subarraySumK(arr, k);
+		subarraySumK1(arr, k);
 		subarraySumKCount(arr, k);
 		subarraySumKMaxLen(arr, k);
 		subarraySumKMinLen1(arr, k);
@@ -54,6 +54,9 @@ public class SlidingWindowArrayPatterns {
 	/*
 	 * This pattern solves problems for the given input array and fixed window size. We have to perform action 
 	 * on this given window size depends on problem such as add, distinct no, avg etc.
+	 * This problem has two patterns
+	 * 	1.Solve the sliding window without using any additional datastructures
+	 *  2.Solve the sliding window using any additional DS like Map, Deque, Heap etc
 	 */
 
 	/* Sliding Window Motivation Problem: To understand the Sliding Window Concepts
@@ -152,8 +155,8 @@ public class SlidingWindowArrayPatterns {
 			maxSum = Math.max(sum, maxSum);
 			if (sum < 0) sum = 0;*/
 			//or
-			sum = Math.max(sum + num, num);
-			maxSum = Math.max(sum, maxSum);
+			sum = Math.max(sum + num, num); //Find max subarray continuously from start to end
+			maxSum = Math.max(sum, maxSum); //Find maximum of all subarrays
 		}
 		return maxSum;
 	}
@@ -202,78 +205,7 @@ public class SlidingWindowArrayPatterns {
 		return Math.min(Math.min(d1, d2), d3);
 	}
 
-	/* Subarray with given sum:Given an unsorted array A of size N of non-negative integers, find a continuous sub-array 
-	 * which adds to a given number.
-	 * Note: It works only for "Positive" numbers
-	 */
-	public boolean subarraySumK(int[] arr, int k) {
-		int sum = 0, l = 0, r = 0;
-		while (r < arr.length) {
-			sum += arr[r];
-			while (sum >= k && l <= r) {
-				if (sum == k) {
-					System.out.println("Subarray Range: " + l + " to " + r);
-					return true;
-				}
-				sum -= arr[l];
-				l++;
-			}
-			r++;
-		}
-		return false;
-	}
-
-	/* Minimum Size Subarray Sum:
-	 * Given an array of n positive integers and a positive integer k, find the minimal length of a contiguous subarray
-	 * of which the sum >= k. If there isn't one, return 0 instead. Example: Input: k = 7, nums = [2,3,1,2,4,3] Output:
-	 * 2 Explanation: the subarray [4,3] has the minimal length under the problem constraint.
-	 */
-	// Approach1: Using Sliding Window -> This works only array has positive elements
-	public int subarraySumKMinLen1(int[] nums, int k) {
-		if (nums.length == 0) return 0;
-
-		int l = 0, r = 0, sum = 0, minLen = Integer.MAX_VALUE;
-		while (r < nums.length) {
-			sum += nums[r];
-			while (sum >= k && l <= r) {
-				if (sum == k) {
-					minLen = Math.min(minLen, r - l + 1);
-				}
-				sum -= nums[l];
-				l++;
-			}
-			r++;
-		}
-		return minLen == Integer.MAX_VALUE ? 0 : minLen;
-	}
-
-	/*
-	 * Longest Subarray having sum of elements atmost ‘k’:
-	 * Given an array, find the maximum sum of subarray close to k but not larger than k
-	 */
-	//TODO: Test this solution
-	// Approach1: Using Sliding Window -> This works only array has positive elements
-	public int subarraySumLenCloseToK(int[] nums, int k) {
-		if (nums.length == 0) return 0;
-
-		int l = 0, r = 0, sum = 0;
-		int maxLen = Integer.MIN_VALUE, prevSum = -1;
-		while (r < nums.length) {
-			sum += nums[r];
-			while (sum > k) {
-				sum -= nums[l];
-				l++;
-			}
-			//Record and Move on: To find atmost 'k'
-			if (prevSum == -1 || sum - k < prevSum - k) {
-				prevSum = sum;
-				maxLen = Math.max(maxLen, r - l + 1);
-			}
-			r++;
-		}
-		return maxLen == Integer.MIN_VALUE ? 0 : maxLen;
-	}
-
+	// TODO: Revisit this pattern and move it accordingly. This is not based on Kadane's algorithm.
 	/* 
 	 * Max Consecutive one I:
 	 * Given a binary array, find the maximum number of consecutive 1s in this array. Example 1: Input: [1,1,0,1,1,1]
@@ -331,13 +263,156 @@ public class SlidingWindowArrayPatterns {
 		return max;
 	}
 
-	/*************** 2.Varying Window Size: Use HashMap+PrefixSum to solve problems ************/
+	/*************** 3.Varying Window Size: Use HashMap+PrefixSum to solve problems ************/
 
-	/* Pattern Understanding:
+	/* 
+	 * Pattern Understanding:
 	 * This pattern problems do not have fixed window/range size. Left and Right pointers varies based on the
 	 * given problem. This pattern mostly used to solve the problem which has both "+ve and -ve" numbers in 
 	 * the input.This pattern problem uses Hashmap where Key stores sum and Value stores Index or 
 	 * frequency(depends on the problem)
+	 * 
+	 * Prefix Sum Approach:
+	 *  Note:
+	 *   1.Prefix Sum Property:
+	 *      sum(i,j) = sum(0,j)-sum(0,i), where sum(i,j) represents the sum of all the elements from index i to j-1.
+	 *   2. Hashing the Prefix Sum for O(1) lookups
+	 * 
+	 *  Common Problems on this pattern & variations:
+	 *  	1. Subarray with given sum target K - 
+	 *  			i.   IsPresent - Is subarray sum K exists in the array
+	 *  			ii.  Count - Count no of subarray with sum K presents
+	 * 				iii. Return Subarray Ranges with sum K
+	 *  	2. Find Min/Max Length Sub Array With Sum K 
+	 *  	3. Max/Min Sum Of Subarray Close To K/Longest Subarray having sum of elements atmost ‘k
+	 */
+
+	/*
+	 * Subarray Sum Equals K:
+	 * Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals to k.
+	 * A subarray is a contiguous non-empty sequence of elements within an array.
+	 * Example 1: 
+	 * 	Input: nums = [1,1,1], k = 2
+	 *  Output: 2
+	 * Example 2: 
+	 * 	Input: nums = [1,2,3], k = 3
+	 *  Output: 2 
+	 *  
+	 *  Approaches:
+	 *    1. Brute Force
+	 *    2. Sliding Window (Works only for +ve numbers)
+	 *    3. Prefix + HashMap 
+	 */
+
+	/*  
+	 * Approach1: Brute force Approach
+	 */
+	public boolean subarraySumK1(int[] nums, int k) {
+		for (int i = 0; i < nums.length; i++) {
+			int sum = 0;
+			for (int j = i; j < nums.length; j++) {
+				sum += nums[j];
+				if (sum == k) return true;
+			}
+		}
+		return false;
+	}
+
+	/*  
+	 * Approach2: Sliding Window(Works only for +ve numbers)
+	 * 
+	 */
+	public boolean subarraySumK2(int[] arr, int k) {
+		int sum = 0, l = 0, r = 0;
+		while (r < arr.length) {
+			sum += arr[r];
+			while (sum >= k && l <= r) {
+				if (sum == k) {
+					System.out.println("Subarray Range: " + l + " to " + r);
+					return true;
+				}
+				sum -= arr[l];
+				l++;
+			}
+			r++;
+		}
+		return false;
+	}
+
+	/*  
+	 * Approach3: Prefix Sum Approach:
+	 *  Note:
+	 *   1.Prefix Sum Property:
+	 *      sum(i,j) = sum(0,j)-sum(0,i), where sum(i,j) represents the sum of all the elements from index i to j-1.
+	 *   2. Hashing the Prefix Sum for O(1) lookups
+	 */
+	public boolean subarraySumK3(int[] nums, int k) {
+		Map<Integer, Integer> prefixSumMap = new HashMap<>();
+		int sum = 0;
+		prefixSumMap.put(0, 1); // For subarrays starting at index 0
+		for (int i = 0; i < nums.length; i++) {
+			sum += nums[i];
+			if (prefixSumMap.containsKey(sum - k)) {
+				return true;
+			}
+			prefixSumMap.put(sum, prefixSumMap.getOrDefault(sum, 0) + 1);
+		}
+
+		return false;
+	}
+
+	/*
+	 * Count Subarray Sum Equals K:
+	 * Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals to k.
+	 * A subarray is a contiguous non-empty sequence of elements within an array.
+	 * Example 1: 
+	 * 	Input: nums = [1,1,1], k = 2
+	 *  Output: 2
+	 * Example 2: 
+	 * 	Input: nums = [1,2,3], k = 3
+	 *  Output: 2 
+	 *  
+	 *  Approach - Prefix + HashMap 
+	 */
+	public int subarraySumKCount(int[] nums, int k) {
+		if (nums.length == 0) return 0;
+
+		Map<Integer, Integer> prefixSumMap = new HashMap<>();
+		int count = 0, sum = 0;
+		prefixSumMap.put(0, 1); // For subarrays starting at index 0
+		for (int i = 0; i < nums.length; i++) {
+			sum += nums[i];
+			if (prefixSumMap.containsKey(sum - k)) {
+				count += prefixSumMap.get(sum - k);
+			}
+			prefixSumMap.put(sum, prefixSumMap.getOrDefault(sum, 0) + 1);
+		}
+
+		return count;
+	}
+
+	/*
+	 * Zero Sum Subarrays: - Count no zero sum sub arrays
+	 * You are given an array A of size N. You need to print the total count of sub-arrays having their sum equal to 0
+	 */
+	public int subarraySumZeroCount(int[] a) {
+		HashMap<Integer, Integer> map = new HashMap<>();
+		//the initial entry map.put(0, 1) can be exchanged with statement: if (sum == k) count++; inside for loop
+		map.put(0, 1);
+		int count = 0, sum = 0, n = a.length;
+		for (int i = 0; i < n; i++) {
+			sum += a[i];
+			if (map.containsKey(sum)) {
+				count += map.get(sum);
+			}
+
+			map.put(sum, map.getOrDefault(sum, 0) + 1);
+		}
+		return count;
+	}
+
+	/*
+	 * Return Subarray Range: Zero Sum Subarray: Input array has both +ve and -ve numbers
 	 * 
 	 * Prefix Sum Patterns Logic: If we consider all prefix sums, we can notice that there is a subarray 
 	 * with 0 sum when : 1) Either a prefix sum repeats or 2) prefix sum becomes 0.
@@ -347,10 +422,6 @@ public class SlidingWindowArrayPatterns {
 	 * 	Here zero sum subarray is
 	 * 		1.when sum=0; (Sum from 0th Index to currIndex)
 	 * 		2.same number repeats (Sum from lastIndex+1 to currIndex)
-	 */
-
-	/*
-	 * Zero Sum Subarray: Input array has both +ve and -ve numbers
 	 */
 	public int[] subarraySumZero1(int[] arr) {
 		//Hashmap: Key: sum; Val: index
@@ -390,67 +461,48 @@ public class SlidingWindowArrayPatterns {
 		return null;
 	}
 
-	/*
-	 * Zero Sum Subarrays: - Count no zero sum sub arrays
-	 * You are given an array A of size N. You need to print the total count of sub-arrays having their sum equal to 0
+	/* Minimum Size Subarray Sum:
+	 * Given an array of n positive integers and a positive integer k, find the minimal length of a contiguous subarray
+	 * of which the sum >= k. If there isn't one, return 0 instead. Example: Input: k = 7, nums = [2,3,1,2,4,3] Output:
+	 * 2 Explanation: the subarray [4,3] has the minimal length under the problem constraint.
 	 */
-	public int subarraySumZeroCount(int[] a) {
-		HashMap<Integer, Integer> map = new HashMap<>();
-		//the initial entry map.put(0, 1) can be exchanged with statement: if (sum == k) count++; inside for loop
-		map.put(0, 1);
-		int count = 0, sum = 0, n = a.length;
-		for (int i = 0; i < n; i++) {
-			sum += a[i];
-			if (map.containsKey(sum)) {
-				count += map.get(sum);
-			}
+	// Approach1: Using Sliding Window -> This works only array has positive elements
+	public int subarraySumKMinLen1(int[] nums, int k) {
+		if (nums.length == 0) return 0;
 
-			map.put(sum, map.getOrDefault(sum, 0) + 1);
+		int l = 0, r = 0, sum = 0, minLen = Integer.MAX_VALUE;
+		while (r < nums.length) {
+			sum += nums[r];
+			while (sum >= k && l <= r) {
+				if (sum == k) {
+					minLen = Math.min(minLen, r - l + 1);
+				}
+				sum -= nums[l];
+				l++;
+			}
+			r++;
 		}
-		return count;
+		return minLen == Integer.MAX_VALUE ? 0 : minLen;
 	}
 
-	/* Subarray Sum Equals K:
-	 * Given an array of integers and an integer k, you need to find the total number of continuous subarrays whose sum
-	 * equals to k. Example 1: Input:nums = [1,1,1], k = 2 Output: 2
-	 */
 	/*
-	 * Solution:
-	 * 	This is a small modification of the subarrayzerosum problem. In fact, we just modify a few parameters to make this work.
-	 *  In the previous solution, we were looking for the sum 0. Here, instead of 0, we're looking for K. While we maintain the
-	 *  prefix sum, if the prefix sum is equal to K, we know that a[0..i] is the resulting subarray.
-	 *  Now here's the important part - if we have previously encountered current_prefix_sum - K, i.e, it is in our hash map at 
-	 *  some index p, that means a[p+1..i] is our result.
-	 *  Why does this work? 
-	 *  Because from index p+1 to i, our sum increased by K. So that subarray has a sum of K .
-	 *  Another simple intuition  is, 
-	 *  	- if same prefix sum present in the map means, sub array sum is zero
-	 *  	- if same prefix sum - k present in the map means, sub array sum is k. i,e difference b/w prev index and curr index 
-	 *  	  is the result.
+	 * Approach2: 
 	 */
-	public int subarraySumKCount(int[] nums, int k) {
-		int n = nums.length, count = 0, sum = 0;
-		//Hashmap: Key: sum[0,i - 1]; Val: frequency
-		Map<Integer, Integer> map = new HashMap<>();
-		//the initial entry map.put(0, 1) can be exchanged with statement: if (sum == k) count++; inside for loop
-		map.put(0, 1);
-		for (int i = 0; i < n; i++) {
+	// TODO: Revisit and make sure that below solution works as expected.
+	public int subarraySumKMinLen2(int[] nums, int k) {
+		int minLen = Integer.MAX_VALUE, sum = 0;
+		//Hashmap: Key: sum[0,i - 1]; Val: index
+		HashMap<Integer, Integer> map = new HashMap<>();
+		map.put(0, -1); //Use this one or below commented -> if (sum == k) 
+		for (int i = 0; i < nums.length; i++) {
 			sum += nums[i];
+			//if (sum == k) minLen = Math.minLen(minLen, i + 1);
 			if (map.containsKey(sum - k)) {
-				count += map.get(sum - k);
+				minLen = Math.min(minLen, i - map.get(sum - k));
 			}
-
-			map.put(sum, map.getOrDefault(sum, 0) + 1);
-
-			//or
-			/*
-			 map.put(k, 1); //Initalize 'k' as 1, instead of 0. 
-			 if (map.containsKey(sum)) {
-				count += map.get(sum);
-			}
-			map.put(sum + k, map.getOrDefault(sum + k, 0) + 1);*/
+			map.put(sum, i);
 		}
-		return count;
+		return minLen;
 	}
 
 	/*
@@ -476,21 +528,31 @@ public class SlidingWindowArrayPatterns {
 		return maxLen;
 	}
 
-	//TODO: Find Minimum Length Sub Array With Sum K
-	public int subarraySumKMinLen2(int[] nums, int k) {
-		int minLen = Integer.MAX_VALUE, sum = 0;
-		//Hashmap: Key: sum[0,i - 1]; Val: index
-		HashMap<Integer, Integer> map = new HashMap<>();
-		map.put(0, -1); //Use this one or below commented -> if (sum == k) 
-		for (int i = 0; i < nums.length; i++) {
-			sum += nums[i];
-			//if (sum == k) minLen = Math.minLen(minLen, i + 1);
-			if (map.containsKey(sum - k)) {
-				minLen = Math.min(minLen, i - map.get(sum - k));
+	/*
+	 * Longest Subarray having sum of elements atmost ‘k’:
+	 * Given an array, find the maximum sum of subarray close to k but not larger than k
+	 */
+	// TODO: Test this solution
+	// Approach1: Using Sliding Window -> This works only array has positive elements
+	public int subarraySumLenCloseToK(int[] nums, int k) {
+		if (nums.length == 0) return 0;
+
+		int l = 0, r = 0, sum = 0;
+		int maxLen = Integer.MIN_VALUE, prevSum = -1;
+		while (r < nums.length) {
+			sum += nums[r];
+			while (sum > k) {
+				sum -= nums[l];
+				l++;
 			}
-			map.put(sum, i);
+			//Record and Move on: To find atmost 'k'
+			if (prevSum == -1 || sum - k < prevSum - k) {
+				prevSum = sum;
+				maxLen = Math.max(maxLen, r - l + 1);
+			}
+			r++;
 		}
-		return minLen;
+		return maxLen == Integer.MIN_VALUE ? 0 : maxLen;
 	}
 
 	/* Maximum Sum of Subarray Close to K:
@@ -543,7 +605,7 @@ public class SlidingWindowArrayPatterns {
 	public static void main(String[] args) {
 		SlidingWindowArrayPatterns ob = new SlidingWindowArrayPatterns();
 		int[] arr = { 3, 9, 1, 7, 8, 2 };
-		System.out.println(ob.subarraySumK(arr, 1));
+		System.out.println(ob.subarraySumK1(arr, 1));
 
 		int[] nums1 = { 1, 3, 2, 4, 2, 1 };
 		System.out.println("Longest subarray: " + ob.subarraySumLenCloseToK(nums1, 7));

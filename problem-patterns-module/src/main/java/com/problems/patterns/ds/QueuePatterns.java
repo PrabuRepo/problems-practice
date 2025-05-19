@@ -197,15 +197,15 @@ public class QueuePatterns {
 
 		for (int i = 0; i < n; i++) {
 			//Keep removing the smaller element from the last in deque
-			while (!deque.isEmpty() && nums[i] > nums[deque.peekLast()]) deque.removeLast();
+			while (!deque.isEmpty() && nums[i] > nums[deque.peekLast()]) deque.removeLast(); //peekLast or getLast
 
 			deque.addLast(i);
 
 			if (i >= k - 1) {
-				result[i - k + 1] = nums[deque.peek()]; //or result[index++] = nums[deque.peekFirst()];
+				result[i - k + 1] = nums[deque.peekFirst()]; //or result[index++] = nums[deque.peekFirst()]; peekFirst == getFirst
 
 				//If 'i' reaches the size k, then Remove the top element 
-				if (i - deque.peekFirst() == k - 1) deque.removeFirst();
+				if (i - deque.peekFirst() == k - 1) deque.removeFirst(); //removeFirst or poll
 			}
 		}
 
@@ -232,18 +232,20 @@ public class QueuePatterns {
 		Deque<Integer> maxDeque = new LinkedList<>();
 
 		for (int i = 0; i < n; i++) {
-			// If 'i' reaches the size k, then Remove the top element
-			if (!minDeque.isEmpty() && i - minDeque.peek() == k) minDeque.poll();
-			if (!maxDeque.isEmpty() && i - maxDeque.peek() == k) maxDeque.poll();
 
 			// Keep removing the smaller element from the last in deque
 			while (!minDeque.isEmpty() && nums[i] < nums[minDeque.peekLast()]) minDeque.removeLast();
 			while (!maxDeque.isEmpty() && nums[i] > nums[maxDeque.peekLast()]) maxDeque.removeLast();
+
 			minDeque.addLast(i);
 			maxDeque.addLast(i);
 
 			if (i >= k - 1) {
-				maxDiff = Math.min(maxDiff, nums[maxDeque.peek()] - nums[minDeque.peek()]);
+				maxDiff = Math.min(maxDiff, nums[maxDeque.peekFirst()] - nums[minDeque.peekFirst()]);
+
+				// If 'i' reaches the size k, then Remove the top element
+				if (i - minDeque.peekFirst() == k) minDeque.removeFirst();
+				if (i - maxDeque.peekFirst() == k) maxDeque.removeFirst();
 			}
 		}
 		return maxDiff;

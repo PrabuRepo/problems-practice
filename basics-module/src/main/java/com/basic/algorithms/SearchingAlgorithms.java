@@ -47,7 +47,7 @@ public class SearchingAlgorithms implements SearchOperations {
 	private int binarySearch(int[] a, int l, int h, int x) {
 		if (l > h) return -1;
 
-		int m = (l + h) / 2; //or l + (h-l)/2;
+		int m = (l + h) / 2; //or l + (h-l)/2; -> This is to prevent overflow(l+h)
 		if (x == a[m]) return m;
 		else if (x < a[m]) return binarySearch(a, l, m - 1, x);
 		else return binarySearch(a, m + 1, h, x);
@@ -148,7 +148,7 @@ public class SearchingAlgorithms implements SearchOperations {
 		int left = 0, right = n - 1, mid1, mid2;
 
 		while (left <= right) {
-			mid1 = left + ((right - left) / 3);
+			mid1 = left + (right - left) / 3;
 			mid2 = left + (2 * (right - left) / 3); // or mid2 = mid1 + ((right - left) / 3);
 
 			if (a[mid1] == x) return mid1;

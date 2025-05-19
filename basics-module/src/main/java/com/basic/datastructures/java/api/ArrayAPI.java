@@ -68,21 +68,21 @@ public class ArrayAPI {
 	 * Overall APIs in the Arrays.java
 	 */
 	public void arrayAPI() {
-		int[] a = { 1, 5, 7, 9 };
-		int[][] arr = { { 1, 6 }, { 9, 8 }, { 3, 5 } };
+		int[] arr = { 1, 5, 7, 9 };
+		int[][] arr2 = { { 1, 6 }, { 9, 8 }, { 3, 5 } };
 
-		Arrays.asList(a); // array
-		Arrays.sort(a); // array
-		Arrays.sort(a, 1, 3); // array, fromIndex, toIndex
-		Arrays.sort(arr, (x, y) -> x[1] - y[1]); // array, comparator
-		Arrays.binarySearch(a, 7); // array, key
-		Arrays.binarySearch(arr, 0, arr.length - 1, 5); // array, fromIndex, toIndex, key
-		Arrays.copyOf(a, a.length); // array, length
-		Arrays.copyOfRange(a, 2, 5); // array, from, to
-		Arrays.equals(a, a); // array1, array2
-		Arrays.fill(a, -1); // array, val
-		Arrays.hashCode(a); // array
-		Arrays.stream(a);
+		Arrays.asList(arr); // array
+		Arrays.sort(arr); // array
+		Arrays.sort(arr, 1, 3); // array, fromIndex, toIndex
+		Arrays.sort(arr2, (x, y) -> x[1] - y[1]); // array, comparator
+		Arrays.binarySearch(arr, 7); // array, key
+		Arrays.binarySearch(arr2, 0, arr2.length - 1, 5); // array, fromIndex, toIndex, key
+		Arrays.copyOf(arr, arr.length); // array, length
+		Arrays.copyOfRange(arr, 2, 5); // array, from, to
+		Arrays.equals(arr, arr); // array1, array2
+		Arrays.fill(arr, -1); // array, val
+		Arrays.hashCode(arr); // array
+		Arrays.stream(arr);
 	}
 
 	public void arraySortAPI() {
@@ -102,12 +102,12 @@ public class ArrayAPI {
 		Arrays.sort(integerArr, 2, 6);
 
 		// 2D Array sorting
-		int[][] arr = { { 1, 6 }, { 9, 8 }, { 3, 5 } };
+		int[][] arr2 = { { 1, 6 }, { 9, 8 }, { 3, 5 } };
 		//Asc order based on 0th index
-		Arrays.sort(arr, (x, y) -> x[0] - y[0]); // array, comparator
+		Arrays.sort(arr2, (x, y) -> x[0] - y[0]); // array, comparator
 		//Desc order based on 1st index
-		Arrays.sort(arr, (x, y) -> y[1] - x[1]); // array, comparator
-		for (int[] ar : arr)
+		Arrays.sort(arr2, (x, y) -> y[1] - x[1]); // array, comparator
+		for (int[] ar : arr2)
 			System.out.println(Arrays.toString(ar));
 	}
 
