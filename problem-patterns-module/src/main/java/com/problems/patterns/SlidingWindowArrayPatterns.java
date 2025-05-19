@@ -26,9 +26,9 @@ public class SlidingWindowArrayPatterns {
 
 		subarraySumK1(arr, k);
 		subarraySumKCount(arr, k);
-		subarraySumKMaxLen(arr, k);
-		subarraySumKMinLen1(arr, k);
-		subarraySumKMinLen2(arr, k);
+		//subarraySumKMaxLen(arr, k);
+		//subarraySumKMinLen1(arr, k);
+		//subarraySumKMinLen2(arr, k);
 
 		subarraySumLenCloseToK(arr, k);
 		subarraySumCloseToK21(arr, k);
