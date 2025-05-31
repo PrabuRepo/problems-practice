@@ -40,6 +40,8 @@ public class StringAPI {
 		 * 	ASCII characters are sequential. Therefore, we can guarantee that '5' - '0' = 5 or 'd' - 'a' = 3.
 		 */
 
+		// Chars Info 
+		DataTypes.charGeneralInfo();
 	}
 
 	public void stringFrequentlyUsedAPIs() {

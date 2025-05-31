@@ -29,12 +29,43 @@ public class DataTypes {
 			 In Java SE 8 and later, you can use the long data type to represent an unsigned 64-bit long. Range(Min:0; Max:2^64-1). 
 			5.float: a single-precision 32-bit IEEE 754 floating point.  Range: ???
 			6.double: a double-precision 64-bit IEEE 754 floating point. Range: ??? 
-			7.boolean: The boolean data type has only two possible values: true and false. This data type represents one bit of information, but its "size" isn't something that's precisely defined.
-			8.char: a single 16-bit Unicode character. It has a minimum value of '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive).
-						128 Ascii chars & 256 Extended Ascii chars 
+			7.boolean: The boolean data type has only two possible values: true and false. This data type represents one bit of information, but
+			           its "size" isn't something that's precisely defined.
+			8.char: a single 16-bit Unicode character. It has a minimum value of '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive).						
 			String: In addition to the eight primitive data types listed above, the Java programming language also provides special support for character strings 
 			via the java.lang.String class. 
 		*/
+	}
+
+	public static void charGeneralInfo() {
+
+		/*
+		 * Char is a single 16-bit Unicode character. It has a minimum value of '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive).
+		 * Char Types: ASCII, Extended ASCII, and Unicode
+		 * 
+		 * 1.Standard ASCII (7-bit):
+		 * 	  Range: 0–127. 2^7 = Total 128 Characters
+		 *    Safe for using fixed-size arrays: int[128] or char[128]
+		 *    Characters Category: Digits, UpperCase, LowerCase, Punctuation, Space.
+		 *    
+		 * 2.Extended ASCII (8-bit):
+		 * 	  Range: 0–255. 2^8 = Total 256 Characters
+		 *    Safe for using fixed-size arrays: int[128] or char[128]
+		 *    Characters Category: All Standard ASCII, Latin chars, Box-drawing  chars, Symbols 
+		 * 
+		 * 3.Unicode (UTF-8, UTF-16, UTF-32): 	 
+		 *    Range: 0–1,114,111 (hex: 0 to 0x10FFFF). Total 1.1M+ Characters
+		 *    Use HashMap<Character, Integer> or Map<Integer, Integer> for full Unicode.
+		 *    Characters Category: 
+		 *    	 All ASCII & Extended ASCII chars,
+		 *       Designed to cover all characters in all human languages. 
+		 *       Accented chars, Emojis, Asian, Greek & other scripts. Special math, currency and symbolic chars
+		 *    Unicode Encodings:
+		 *    	UTF-8:  Variable (8–32 bits), Note: Most common unicode encoding; backward-compatible with ASCII
+		 *      UTF-16: Variable (16 or 32 bits), Note: Used in Java char, Windows internal encoding
+		 *      UTF-32: Fixed 32 bits, Note: Simplifies indexing; more memory-heavy
+		 * 
+		 */
 	}
 
 	public static void characterAPI() {

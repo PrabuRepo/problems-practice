@@ -17,7 +17,31 @@ public class SlidingWindowStringPatterns {
 	 *  	- Two pointers(l & r) to iterate the string from 0th index to n-1
 	 *  	- Fixed hash array or map to store the required chars for the given logic
 	 *  	- For few problems counter variable can be useful to find the window
-	 *  Note: Prefer to use hash array, its little bit fast comparing to map.
+	 *  
+	 *  This Pattern can be solved by two approaches:
+	 *  	1.Using Fixed-Size Frequency Arrays:
+	 *  	  Uses HashMap to stores char -> count of t
+	 *  		ASCII: Uses 7 bits ->  2^7=128 characters. int[128] array to track character frequencies 
+	 *          Extended ASCII: 8 bits -> 2^8=256 characters (includes accented letters, some symbols)/  int[256] array to track character frequencies 
+	 *  	  Time Complexity: O(n) - Each character is processed at most twice (once by right, once by left)
+	 *        Space Complexity: O(1) - Since the frequency arrays are of size 128 or 256
+	 *        Pros: Very fast due to use of arrays -> constant-time lookups/updates. No overhead of object boxing or hashing
+	 *        Cons: Only suitable for ASCII (or Unicode up to a fixed set). Less readable (magic numbers like 128)
+	 *        This is faster than using Map because:
+	 *        	Array index lookup is constant-time
+	 *        	Arrays are memory-contiguous (better cache locality)
+	 *        	No need for hashing or boxing (primitive vs object overhead)
+	 *  	2.Using HashMap
+	 *  	  Uses HashMap to stores char -> count of t
+	 *  	  Time Complexity: O(n) - Each character is processed at most twice (once by right, once by left). But operations on HashMap are O(1) amortized
+	 *  	  Space Complexity: O(k) - k = number of unique characters in t
+	 *        Pros: Works for any Unicode characters. More readable and flexible
+	 *        Cons: Slower in practice due to: HashMap overhead (hashing, boxing/unboxing). No cache locality (HashMap spread in memory)
+	 *     
+	 *     Use Array when:
+	 *     	  You're working with known, limited charset (ASCII or lowercase only). Performance is critical
+	 *     Use HashMap when:
+	 *     	  Characters may be outside ASCII (e.g. Unicode or case-sensitive). Readability or flexibility is more important
 	 */
 
 	/* Minimum Window Substring/Smallest window in a string containing all the char of another string:
@@ -113,7 +137,10 @@ public class SlidingWindowStringPatterns {
 			hash[c1]--;
 
 			while (counter == p.length()) {
-				if ((r - l + 1) == p.length()) result.add(l);
+				// This condition make sure that string is continuous substring
+				if ((r - l + 1) == p.length()) {
+					result.add(l);
+				}
 
 				char c2 = s.charAt(l);
 				hash[c2]++;
@@ -274,6 +301,11 @@ public class SlidingWindowStringPatterns {
 
 	/*
 	 * Longest Substring with At Most K Distinct Characters:
+	 * Given a string s and an integer k, return the length of the longest substring that contains at most k distinct characters.
+	 * Sample:
+	 * 	s="eceba", k=2, output=3
+	 *  s="aa", k=1, output=2
+	 *  s="abcadcacacaca", k=3, output=11
 	 */
 	public int lengthOfLongestSubstringKDistinct1(String s, int k) {
 		int[] hash = new int[128];
