@@ -276,28 +276,28 @@ public class StackPatterns {
 
 	/********************** Monotonic Stack problems *******************/
 	/*
-	 * 	Monotonic stack is actually a stack. It just uses some ingenious logic to keep the elements in the stack orderly
-	 * (monotone increasing or monotone decreasing) after each new element putting into the stack. Well,sounds like a heap?
-	 * No, monotonic stack is not widely used. It only deals with one typical problem, which is called Next Greater Element
-	 * The monotonous stack mainly answers several questions like this.
-	 * 		The next element larger than the current element
-	 * 		The previous element larger than the current element
-	 * 		The next element smaller than the current element
-	 * 		The previous element smaller than the current element
-	 * Tips: You can store indexes in the stack, or you can directly store elements
+	 * A monotonic stack is a stack that maintains elements in either strictly increasing or decreasing order. 
+	 * Monotonic Increasing Stack: It keeps elements in an increasing order. Top has the smallest, and each new element is larger than the previous.
+	 * Monotonic Decreasing Stack: It keeps elements in an decreasing order. Top has the largest, and each new element is smaller than the previous.
 	 * 
-	 * Monotonic increasing stack:
-	 * 		monotonous increase stack keeps elements in an increasing order. 
-	 * 		push an element e in stack and pop out the element; s.peek()>=e(violation).
-	 * Monotonic decreasing stack: 
-	 * 		monotonous increase stack keeps elements in an decreasing order. 
-	 * 		push an element e in stack and pop out the element; s.peek()<=e (violation).
+	 * Note: Can store indices or value in the stack. Store indices in the stack for range/position-based logic.
+	 * 
+	 * Why Use Monotonic Stacks? 
+	 * They're useful when:
+	 * 		You want to find the next greater/smaller element
+	 * 		You need to process elements in relative order
+	 * 		You care about first obstacle/block/limit in left/right directions
+	 * 
+	 * Common Problems Solved with Monotonic Stacks:
+	 * 		Next Greater / Smaller Element
+	 * 		Histogram & Ranges
+	 * 		Temperature / Sliding Window / Array Trends
 	 */
 	//monotonous increasing stack: elements in the monotonous increase stack keeps an increasing order.
 	public void monotonicIncreasingStack(int[] arr) {
 		Stack<Integer> stack = new Stack<>();
 		for (int i = 0; i < arr.length; i++) {
-			while (!stack.empty() && stack.peek() > arr[i]) {
+			while (!stack.empty() && arr[i] < stack.peek()) {
 				stack.pop();
 			}
 			stack.push(arr[i]);
@@ -308,7 +308,7 @@ public class StackPatterns {
 	public void monotonicDecreasingStack(int[] arr) {
 		Stack<Integer> stack = new Stack<>();
 		for (int i = 0; i < arr.length; i++) {
-			while (!stack.empty() && stack.peek() < arr[i]) {
+			while (!stack.empty() && arr[i] > stack.peek()) {
 				stack.pop();
 			}
 			stack.push(arr[i]);
@@ -340,7 +340,7 @@ public class StackPatterns {
 		Map<Integer, Integer> map = new HashMap<>();
 
 		for (int i = 0; i < nums2.length; i++) {
-			while (!stack.isEmpty() && stack.peek() < nums2[i]) {
+			while (!stack.isEmpty() && nums2[i] > stack.peek()) {
 				map.put(stack.pop(), nums2[i]);
 			}
 			stack.push(nums2[i]);
@@ -389,7 +389,7 @@ public class StackPatterns {
 		//Then iterate from backend and find the next greatest element
 		int[] result = new int[n];
 		for (int i = n - 1; i >= 0; i--) {
-			while (!stack.isEmpty() && stack.peek() <= nums[i]) {
+			while (!stack.isEmpty() && nums[i] >= stack.peek()) {
 				stack.pop();
 			}
 			result[i] = stack.isEmpty() ? -1 : stack.peek();
@@ -406,7 +406,7 @@ public class StackPatterns {
 		Stack<int[]> stack = new Stack<>();
 		for (int i = 0; i < prices.length; i++) {
 			int count = 1;
-			while (!stack.isEmpty() && stack.peek()[0] <= prices[i]) {
+			while (!stack.isEmpty() && prices[i] >= stack.peek()[0]) {
 				count += stack.pop()[1];
 			}
 			stack.push(new int[] { prices[i], count });
@@ -473,7 +473,7 @@ public class StackPatterns {
 		Stack<Integer> stack = new Stack<>();
 		int maxArea = 0, n = heights.length;
 		for (int i = 0; i <= n; i++) {
-			while (!stack.isEmpty() && (i == n || heights[stack.peek()] >= heights[i])) {
+			while (!stack.isEmpty() && (i == n || heights[i] <= heights[stack.peek()])) {
 				int h = heights[stack.pop()];
 				int w = stack.isEmpty() ? i : i - stack.peek() - 1;
 				maxArea = Math.max(maxArea, h * w);
@@ -483,7 +483,11 @@ public class StackPatterns {
 		return maxArea;
 	}
 
-	//Trapping Rain Water -using Monotonic decreasing stack 
+	/*
+	 * 4.Trapping Rain Water -using Monotonic decreasing stack 
+	 * 	Time: (O(n)
+	 *  Space: O(n)
+	 */
 	public int trappingRainWater(int[] height) {
 		if (height.length <= 1) return 0;
 
@@ -491,11 +495,14 @@ public class StackPatterns {
 		int n = height.length, water = 0;
 
 		for (int i = 0; i < n; i++) {
-			while (!stack.isEmpty() && height[stack.peek()] < height[i]) {
-				int prev = stack.pop();
+			// When we find a higher bar than the one at the top of the stack, it means we may have found a right boundary for trapping water.
+			while (!stack.isEmpty() && height[i] > height[stack.peek()]) {
+				int top = stack.pop(); // Pop the top (this is the bottom of the valley). 
 				if (stack.isEmpty()) break;
-				int minHeight = Math.min(height[stack.peek()], height[i]);
-				water += (minHeight - height[prev]) * (i - stack.peek() - 1);
+				// Left Boundary is new top(peek) element at the stack, right boundary is current value, previous top gives the bottom of the valley.
+				int boundedHeight = Math.min(height[stack.peek()], height[i]) - height[top];
+				int width = i - stack.peek() - 1;
+				water += boundedHeight * width;
 			}
 			stack.push(i);
 		}

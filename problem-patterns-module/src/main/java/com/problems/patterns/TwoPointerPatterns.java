@@ -197,60 +197,98 @@ public class TwoPointerPatterns {
 	/******************* UnSorted: Forward & Reverse Traversals ****************/
 
 	/*Trapping rain water:
-	 * Height of water = Minimum(tallest left hand bar & tallest right hand bar) - height of current bar 
+	 * Height of water = Minimum(tallest left hand bar & tallest right hand bar) - height of current bar
+	 * 
+	 * This problem can be solved using following approaches:
+	 * 	1.Brute Force
+	 *  2.Prefix-Suffix (DP)
+	 *  3.Two Pointers (Optimal)
+	 *  4.Monotonic Stack
 	 */
-	// Approach1 : Time Complexity: O(n) and takes Auxiliary Space: O(n)
-	public int trappingRainWater1(int[] a) {
-		int n = a.length;
-		int[] tallestLeftArr = new int[n];
-		int[] tallestRightArr = new int[n];
 
-		// Find the tallest bar from the left side
-		tallestLeftArr[0] = a[0];
-		for (int i = 1; i < n; i++)
-			tallestLeftArr[i] = Math.max(tallestLeftArr[i - 1], a[i]);
+	/*
+	 * 1.Brute Force:
+	 * 	Time: (O(n²)). Space: O(1)
+	 */
+	public int trappingRainWater1(int[] height) {
+		if (height.length == 0) return 0;
 
-		// Find the tallest bar from the right side
-		tallestRightArr[n - 1] = a[n - 1];
-		for (int i = n - 2; i >= 0; i--)
-			tallestRightArr[i] = Math.max(tallestRightArr[i + 1], a[i]);
+		int water = 0, n = height.length;
+		for (int i = 1; i < n - 1; i++) {
+			int leftMax = 0, rightMax = 0;
 
-		// Find minimum from tallestLeftArr & tallestRightAr and then subtract with current bar
-		int sum = 0;
-		for (int i = 0; i < n; i++)
-			sum += (Math.min(tallestLeftArr[i], tallestRightArr[i]) - a[i]);
+			for (int j = 0; j <= i; j++) {
+				leftMax = Math.max(leftMax, height[j]);
+			}
 
-		return sum;
+			for (int j = i; j < n; j++) {
+				rightMax = Math.max(rightMax, height[j]);
+			}
+
+			water += Math.min(leftMax, rightMax) - height[i];
+		}
+
+		return water;
 	}
 
-	// Its similar to approach1 without any additional space
-	// Time Complexity: O(n) without Auxiliary Space
-	public int trappingRainWater2(int[] a) {
-		int sum = 0;
-		int l = 0, h = a.length - 1;
-		int tallestLeft = 0, tallestRight = 0;
-		while (l < h) {
-			// Find the tallest bar from the left side & right side and execute corresponding block
-			if (a[l] < a[h]) {
-				// If current index is less than tallest left bar then add in the sum, otherwise keep updating the
-				// tallestLeft
-				if (a[l] > tallestLeft) tallestLeft = a[l];
-				else sum += tallestLeft - a[l];
+	/* 2.Prefix-Suffix (DP): 
+	 * Time Complexity: O(n) and takes Auxiliary Space: O(n)
+	 */
+	public int trappingRainWater2(int[] height) {
+		if (height.length == 0) return 0;
 
+		int water = 0, n = height.length;
+		int[] leftMax = new int[n];
+		int[] rightMax = new int[n];
+
+		leftMax[0] = height[0];
+		for (int i = 1; i < n; i++) {
+			leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+		}
+
+		rightMax[n - 1] = height[n - 1];
+		for (int i = n - 2; i >= 0; i--) {
+			rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+		}
+
+		for (int i = 0; i < n; i++) {
+			water += Math.min(leftMax[i], rightMax[i]) - height[i];
+		}
+
+		return water;
+	}
+
+	/*
+	 * 3.Two Pointers(Optimal Solution):
+	 * 		Time: O(n)
+	 * 		Space: O(1)
+	 */
+	public int trappingRainWater3(int[] height) {
+		if (height.length == 0) return 0;
+
+		int water = 0, l = 0, r = height.length - 1;
+		int leftMax = 0, rightMax = 0;
+
+		while (l < r) {
+			if (height[l] < height[r]) {
+				if (height[l] > leftMax) leftMax = height[l];
+				else water += leftMax - height[l];
 				l++;
 			} else {
-				// If current index is less than tallest right bar then add in the sum, otherwise keep updating the
-				// tallestRight
-				if (a[h] > tallestRight) tallestRight = a[h]; // Update the max right
-				else sum += tallestRight - a[h];
-
-				h--;
+				if (height[r] > rightMax) rightMax = height[r];
+				else water += rightMax - height[r];
+				r--;
 			}
 		}
-		return sum;
+
+		return water;
 	}
 
-	//Using Stack - Monotonic Stack Pattern
+	/*
+	 * 4.Monotonic Stack 
+	 * 	Time: (O(n)
+	 *  Space: O(n)
+	 */
 	public int trap(int[] height) {
 		StackPatterns ob = new StackPatterns();
 		return ob.trappingRainWater(height);
