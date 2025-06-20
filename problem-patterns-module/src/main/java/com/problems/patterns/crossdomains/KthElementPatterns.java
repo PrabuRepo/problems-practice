@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Stack;
 
 import com.common.model.Cell;
@@ -113,6 +114,108 @@ public class KthElementPatterns {
 		}
 		Utils.swap(a, i, right);
 		return i;
+	}
+
+	/*
+	 * Kth Largest Element in an Array:
+	 * Given an integer array nums and an integer k, return the kth largest element in the array. Note that it is the kth largest element 
+	 * in the sorted order, not the kth distinct element.
+	 * Can you solve it without sorting?
+	 * 	Example 1:
+	 * 		Input: nums = [3,2,1,5,6,4], k = 2, Output: 5
+	 *  Example 2:
+	 *  	Input: nums = [3,2,3,1,2,4,5,5,6], k = 4, Output: 4
+	 */
+
+	//1.Using Sorting: Time: O(nlogn), Space: O(1) (in-place sort)
+	public int findKthLargest1(int[] nums, int k) {
+		int n = nums.length;
+		if (n == 0 || n < k) return 0;
+
+		Arrays.sort(nums);
+		return nums[n - k];
+	}
+
+	/* 
+	2. Partition or Quick Select: Time: O(n) avg & O(n²) worst, Space: O(1) (in-place)
+	  - The partition subroutine of quicksort can also be used to solve this problem. 
+	  - In partition, we divide the array into elements>=pivot pivot elements<=pivot
+	  - Then, according to the index of pivot, we will know whther the kth largest element is to the left 
+	    or right of pivot or just itself.
+	  - In average, this algorithm reduces the size of the problem by approximately one half after each partition, 
+	    giving the recurrence T(n) = T(n/2) + O(n) with O(n) being the time for partition. 
+	  - The solution is T(n) = O(n), which means we have found an average linear-time solution. However, in the
+	    worst case, the recurrence will become T(n) = T(n - 1) + O(n) and T(n) = O(n^2).
+	*/
+	public int findKthLargest2(int[] nums, int k) {
+		if (nums.length == 0 || k == 0) return 0;
+
+		int l = 0, r = nums.length - 1;
+
+		while (l <= r) {
+			int index = partition2(nums, l, r);
+
+			if (index == k - 1) return nums[index];
+			else if (index < k - 1) l = index + 1;
+			else r = index - 1;
+		}
+
+		return -1;
+	}
+
+	//Reverse Partition for Largest Element;
+	private int partition2(int[] a, int left, int right) {
+		if (left == right) return left;
+		int pivot = a[right];
+		int i = left, j = left;
+		while (j < right) {
+			if (a[j] > pivot) {
+				swap(a, i, j);
+				i++;
+			}
+			j++;
+		}
+		swap(a, i, right); // swap pivot element at the end
+		return i;
+	}
+
+	private void swap(int[] a, int i, int j) {
+		if (i == j) return;
+		int temp = a[i];
+		a[i] = a[j];
+		a[j] = temp;
+	}
+
+	// 3.Heap Approach-1: Time: O(n log n), Space: O(n)
+	public int findKthLargest3(int[] nums, int k) {
+		if (nums.length == 0) return -1;
+
+		Queue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
+		for (int num : nums) // O(nlogn) time
+			maxHeap.add(num);
+
+		for (int i = 1; i < k; i++) // O(klogn) time
+			maxHeap.remove(); // or maxHeap.poll();
+
+		return !maxHeap.isEmpty() ? maxHeap.peek() : -1;
+	}
+
+	// 4.Heap Approach-2: Time: O(n log k), Space: O(k)
+	public int findKthLargest(int[] nums, int k) {
+		if (nums.length == 0) return -1;
+
+		Queue<Integer> minHeap = new PriorityQueue<>();
+
+		//Time: O(nlogK)
+		for (int num : nums) {
+			minHeap.add(num);
+			if (minHeap.size() > k) {
+				minHeap.poll(); // or  minHeap.remove();
+			}
+		}
+
+		return !minHeap.isEmpty() ? minHeap.peek() : -1;
 	}
 
 	/*
