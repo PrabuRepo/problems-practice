@@ -119,7 +119,7 @@ public class BinarySearchPatterns {
 			if (nums[m] > nums[h]) l = m + 1;
 			else h = m;
 		}
-		return nums[h];
+		return nums[h]; // or nums[l]
 	}
 
 	// Find Minimum in Rotated Sorted Array II
@@ -133,7 +133,7 @@ public class BinarySearchPatterns {
 			else if (nums[m] < nums[h]) h = m;
 			else h--;
 		}
-		return nums[h]; // nums[l]
+		return nums[h]; // or nums[l]
 	}
 
 	// Search in Rotated Sorted Array
@@ -163,7 +163,6 @@ public class BinarySearchPatterns {
 
 	// Search in Rotated Sorted Array II
 	public boolean searchRotatedSortedArray2(int[] nums, int target) {
-
 		int l = 0, h = nums.length - 1, m = 0;
 		while (l <= h) {
 			m = l + (h - l) / 2;

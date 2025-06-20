@@ -3,6 +3,7 @@ package com.basic.algorithms;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.Scanner;
 
 import com.basic.algorithms.operations.SortOperations;
@@ -449,6 +450,24 @@ public class SortingAlgorithms implements SortOperations {
 	 * 
 	 * Time Complexity: Best/Average: O(n log n), Worst: O(n^2) (if pivot choice is poor) 
 	 * Space Complexity: O(log n) (due to recursion)
+	 * 
+	 * 
+	 * Pivot Element Choice: Last Element Vs Random Vs Median
+	 * 	1.Last Element:
+	 * 		- Always picks the last element as pivot. Easy to implement, but poor with sorted or reverse-sorted data.
+	 * 		- Best For Simple examples, learning purposes.
+	 *		- Worst Case Time Complexity: O(n^2)
+	 * 	2.Random:
+	 * 		- Picks a random index in the range [low, high] as pivot. Reduces chances of worst-case. Performs well in practice.
+	 * 		- Best For General/random input.
+	 *		- Avg Time Complexity: O(n log n). Minimizes the chance of hitting worst-case.
+	 * 	3.Median:
+	 * 		- Uses the median of first, middle, and last elements as the pivot.	More balanced partitions; good for improving performance and stability.
+	 * 		- Best for Partially sorted or patterned arrays
+	 * 		- Avg Time Complexity: O(n log n). Minimizes the chance of hitting worst-case.
+	 *  Why Pivot Choice Matters?
+	 *  	- The efficiency of Quick Sort depends heavily on how balanced the partitioning is.
+	 *  	- A bad pivot (always smallest or largest element) leads to unbalanced partitions, and thus O(n²) time.
 	 */
 	public void quickSort(int[] a) {
 		qSort(a, 0, a.length - 1);
@@ -457,9 +476,36 @@ public class SortingAlgorithms implements SortOperations {
 	private void qSort(int[] a, int left, int right) {
 		if (left >= right) return;
 
+		// Option1: Last Element
 		int mid = partition(a, left, right);
+
+		// Option2: Random
+		// int mid = randomPartition(a, left, right);
+
+		// Option3: Median
+		//int mid = medianPartition(a, left, right);
+
 		qSort(a, left, mid - 1);
 		qSort(a, mid + 1, right);
+	}
+
+	private int randomPartition(int[] arr, int left, int right) {
+		Random random = new Random();
+		int pivotIndex = random.nextInt(right - left + 1) + left;
+		Utils.swap(arr, right, pivotIndex);
+		return partition(arr, left, right);
+	}
+
+	private int medianPartition(int[] arr, int low, int high) {
+		int mid = low + (high - low) / 2;
+
+		// Sort low, mid, high to find median
+		if (arr[low] > arr[mid]) Utils.swap(arr, low, mid);
+		if (arr[low] > arr[high]) Utils.swap(arr, low, high);
+		if (arr[mid] > arr[high]) Utils.swap(arr, mid, high);
+
+		Utils.swap(arr, mid, high); // Use median as pivot
+		return partition(arr, low, high);
 	}
 
 	private int partition(int[] a, int left, int right) {

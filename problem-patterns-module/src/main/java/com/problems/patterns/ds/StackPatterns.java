@@ -331,14 +331,12 @@ public class StackPatterns {
 		}
 	}
 
-	// Approach2: Used Monotonic Decreasing Stack; Time: O(n), Space: O(n)
+	// Approach2: Traverse from Left to Right, stack keeps the data Monotonically decreasing order. Time: O(n), Space: O(n)
 	public int[] nextGreaterElementI2(int[] nums1, int[] nums2) {
-		if (nums2.length == 0 || nums1.length == 0) return new int[0];
-
 		int[] result = new int[nums1.length];
+
 		Stack<Integer> stack = new Stack<>();
 		Map<Integer, Integer> map = new HashMap<>();
-
 		for (int i = 0; i < nums2.length; i++) {
 			while (!stack.isEmpty() && nums2[i] > stack.peek()) {
 				map.put(stack.pop(), nums2[i]);
@@ -346,11 +344,32 @@ public class StackPatterns {
 			stack.push(nums2[i]);
 		}
 
-		/*while (!stack.isEmpty())
-			map.put(stack.pop(), -1);*/
+		for (int i = 0; i < nums1.length; i++) {
+			result[i] = map.get(nums1[i]) != null ? map.get(nums1[i]) : -1;
+		}
 
-		for (int i = 0; i < nums1.length; i++)
-			result[i] = map.getOrDefault(nums1[i], -1);
+		return result;
+	}
+
+	// Approach3: Traverse from right to left, stack keeps the data Monotonically increasing order. Time: O(n), Space: O(n)
+	public int[] nextGreaterElementI3(int[] nums1, int[] nums2) {
+		int[] result = new int[nums1.length];
+
+		Stack<Integer> stack = new Stack<>();
+		Map<Integer, Integer> map = new HashMap<>();
+		for (int i = nums2.length - 1; i >= 0; i--) {
+			while (!stack.isEmpty() && nums2[i] >= stack.peek()) {
+				stack.pop();
+			}
+			if (!stack.isEmpty()) {
+				map.put(nums2[i], stack.peek());
+			}
+			stack.push(nums2[i]);
+		}
+
+		for (int i = 0; i < nums1.length; i++) {
+			result[i] = map.get(nums1[i]) != null ? map.get(nums1[i]) : -1;
+		}
 
 		return result;
 	}
@@ -375,8 +394,47 @@ public class StackPatterns {
 		return res;
 	}
 
-	//Using Monotonic Decreasing Stack, but iterate from back
+	/* Approach2: Traverse from right to left, stack keeps the data Monotonically increasing order and traverse twice to simulate a circular behavior.
+	 * Note: 
+	 * In Next Greater Element II, each element may need to look ahead in a circular manner. That is, after reaching the end of the array, you might 
+	 * need to wrap around and continue from the beginning.
+	 * Why Iterate Backward from 2n - 1 to 0?
+	 * 	- To simulate a circular behavior
+	 *  - After first iteration, Since traversal is backward, first element will be top of the stack and keeps the element in the increase sequence from 0 to n-1.
+	 *  - Second iteration, it uses data in stack to check the next greater element from 0 to n-1  
+	 *  
+	 *  Why Iterate Backward from 2n - 1 to 0 in Circular Array Problems?
+	 *  	- To simulate circular behavior efficiently
+	 *  	- First half of the loop (i = 2n-1 to n): Preloads the stack with elements from the end to the beginning of the array. This builds up a monotonic 
+	 *        stack with potential "future" greater elements for the actual positions in the array. 
+	 *      - Second half (i = n-1 to 0): Now that the stack contains possible greater elements (including wrapped-around ones), we compute the result for
+	 *        each index from 0 to n-1 by using the top of the stack.
+	 */
 	public int[] nextGreaterElementsII2(int[] nums) {
+		if (nums.length == 0) return new int[0];
+
+		Stack<Integer> stack = new Stack<>();
+		int n = nums.length;
+		//1.First add the elements in the stack
+		for (int i = n - 1; i >= 0; i--) {
+			stack.push(nums[i]);
+		}
+
+		//Then iterate from backend and find the next greatest element
+		int[] result = new int[n];
+		for (int i = n - 1; i >= 0; i--) {
+			while (!stack.isEmpty() && nums[i] >= stack.peek()) {
+				stack.pop();
+			}
+			result[i] = stack.isEmpty() ? -1 : stack.peek();
+			stack.push(nums[i]);
+		}
+
+		return result;
+	}
+
+	// Slight modification of above approach. First the element from bottom to top in the stack, then process it
+	public int[] nextGreaterElementsII3(int[] nums) {
 		if (nums.length == 0) return new int[0];
 
 		Stack<Integer> stack = new Stack<>();

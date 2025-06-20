@@ -5,7 +5,23 @@ import com.common.utilities.Utils;
 /*
  * Quick Select or Partition Problems:
  * 	2-way partitioning  - Forward & Reverse
- *  3-way partitioning
+ *  3-way partitioning or Dutch National Flag Algorithm
+ *  
+ *  2-way partitioning:
+ *  	Divide the array into two parts:
+ *  		- Elements less than the pivot
+ *  		- Elements greater than or equal to the pivot (Lomuto) or vice versa
+ * 			- Duplicates may not be grouped, leading to unnecessary comparisons
+ *  	 Use Case: 
+ *  		- Use 2-way partitioning for most QuickSelect needs when the input is random and not duplicate-heavy.
+ *  3-way partitioning:
+ *  	Divide the array into three parts:
+ *  		- Elements less than pivot
+ *  		- Elements equal to pivot
+ *  		- Elements greater than pivot
+ *  		- This helps skip all duplicates in one step during recursion
+ *		Use Case:
+ *			- Use 3-way partitioning when the input has lots of duplicates or you're using it in QuickSort for better worst-case performance.
  *  
  * Note: Dont add too many problems here, These problems are already covered in DataRearrangement Patterns
  */
@@ -17,6 +33,7 @@ public class QuickSelectPatterns {
 	 * Use Partition to find the kth Smallest Element; 
 	 */
 	public int partition(int[] a, int left, int right) {
+		if (left == right) return left;
 		int i = left, j = left, pivot = a[right];
 		while (j < right) {
 			if (a[j] < pivot) {
@@ -34,6 +51,7 @@ public class QuickSelectPatterns {
 	 * Use reverse Partition to find the kth Largest Element;
 	 */
 	private int reversePartition(int[] a, int left, int right) {
+		if (left == right) return left;
 		int pivot = a[right];
 		int i = left, j = left;
 		while (j < right) {
@@ -254,6 +272,29 @@ public class QuickSelectPatterns {
 
 	/************************* Using 3-way Partition **************************/
 
+	/* 3-way partitioning or Dutch National Flag Algorithm - Sample problem
+	 * Applying dutch flag algorithm to partition the array.
+	 * Eg: 
+	 * 	  Input: {3, 2, 8, 5, 1, 4, 6, 0}; Pivot = 4
+	 * 	  output: {3, 2, 0, 1, 4, 6, 5, 8}
+	 */
+	public int[] threeWayPartition(int[] arr, int pivot) {
+		int l = 0, h = arr.length - 1, curr = 0;
+		while (curr <= h) {
+			if (arr[curr] < pivot) { //Left Boundary
+				Utils.swap(arr, l, curr);
+				l++;
+				curr++;
+			} else if (arr[curr] == pivot) { //Mid Boundary
+				curr++;
+			} else if (arr[curr] > pivot) { //Right Boundary
+				Utils.swap(arr, curr, h);
+				h--;
+			}
+		}
+		return arr;
+	}
+
 	/*Sort Colors/Sort an array of 0s, 1s and 2s*/
 	// 1.Using count array - With additional space
 	// 2.Using 3-way Partition: Time: O(n)
@@ -290,29 +331,6 @@ public class QuickSelectPatterns {
 		}
 
 		return a;
-	}
-
-	/*
-	 * Applying dutch flag algorithm to partition the array.
-	 * Eg: 
-	 * 	  Input: {3, 2, 8, 5, 1, 4, 6, 0}; Pivot = 4
-	 * 	  output: {3, 2, 0, 1, 4, 6, 5, 8}
-	 */
-	public int[] dutchFlagAlgSample(int[] arr, int pivot) {
-		int l = 0, h = arr.length - 1, curr = 0;
-		while (curr <= h) {
-			if (arr[curr] < pivot) { //Left Boundary
-				Utils.swap(arr, l, curr);
-				l++;
-				curr++;
-			} else if (arr[curr] == pivot) { //Mid Boundary
-				curr++;
-			} else if (arr[curr] > pivot) { //Right Boundary
-				Utils.swap(arr, curr, h);
-				h--;
-			}
-		}
-		return arr;
 	}
 
 }
