@@ -203,19 +203,19 @@ public class HeapPatterns {
 
 	public void kthSmallestElement(int[] a, int k) {
 		kthElementPatterns.kthSmallestElementInArray1(a, k);
-		kthElementPatterns.kthSmallestElementInArray21(a, k);
-		kthElementPatterns.kthSmallestElementInArray22(a, k);
+		kthElementPatterns.kthSmallestElementInArray2(a, k);
 		kthElementPatterns.kthSmallestElementInArray3(a, k);
+		kthElementPatterns.kthSmallestElementInArray4(a, k);
 	}
 
 	/********************* 3.Top K Elements Pattern *************************/
 	KElementsPattern kElementsPatterns;
 
 	public void topKFrequentElements(int[] nums, int k) {
-		kElementsPatterns.topKFrequentElements11(nums, k);
-		kElementsPatterns.topKFrequentElements12(nums, k);
-		kElementsPatterns.topKFrequentElements13(nums, k);
-		kElementsPatterns.topKFrequentElements2(nums, k);
+		kElementsPatterns.topKFrequentElements1(nums, k);
+		kElementsPatterns.topKFrequentElements21(nums, k);
+		kElementsPatterns.topKFrequentElements22(nums, k);
+		kElementsPatterns.topKFrequentElements3(nums, k);
 	}
 
 	public void rearrangeString(String str, int k) {

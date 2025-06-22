@@ -27,94 +27,6 @@ public class KthElementPatterns {
 	MatrixPatterns matrixPatterns = new MatrixPatterns();
 
 	/********************* Search Kth element *************************/
-	// Kth Smallest Element in Unsorted Array
-	/* Find the kth Smallest element in an unsorted array. Note that it is the kth largest element in the sorted order,
-	 * not the kth distinct element.
-	 * Example 1: Input: [3,2,1,5,6,4] and k = 2; Output: 2
-	 */
-
-	// Approach1:Sort the given array using a sorting algorithm and return the element at index k-1 in the sorted array.
-	// Time Complexity: O(nLogn)
-	public int kthSmallestElementInArray1(int[] a, int k) {
-		Arrays.sort(a);
-		return a[k - 1];
-	}
-
-	// Approach21: Using Min Binary Heap: Time Complexity-O(nlogn)
-	public int kthSmallestElementInArray21(int[] arr, int k) {
-		PriorityQueue<Integer> queue = new PriorityQueue<>();
-		for (int i = 0; i < arr.length; i++) // O(nlogn)
-			queue.add(arr[i]);
-
-		for (int i = 0; i < k - 1; i++) // O(klogn) time
-			queue.remove();
-
-		return queue.peek();
-	}
-
-	// Approach22: Using Max Binary Heap: Time Complexity-O(nlogk)
-	public int kthSmallestElementInArray22(int[] arr, int k) {
-		PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
-		for (int i = 0; i < arr.length; i++) {// O(nlogk) times
-			queue.add(arr[i]);
-			if (queue.size() > k) queue.poll();
-
-			//or below logic saves few add/remove operations, but both with O(nlogk) time
-			/*if (queue.isEmpty() || queue.size() < k) {
-				queue.add(arr[i]);
-			} else if (arr[i] < queue.peek()) {
-				queue.remove();
-				queue.add(arr[i]);
-			}*/
-		}
-		return queue.peek();
-	}
-
-	/*
-	 * Using Quick sort Partitioning or Quick Select: Expect Linear Time complexity: O(n) 
-	 * Kth Smallest/Largest Element in Unsorted Array -  
-	 *   Partition or Quick Select: The partition subroutine of quicksort can also be used to solve this problem. 
-	 *  In partition, we divide the array into elements>=pivot pivot elements<=pivot. Then, according to the index of pivot,
-	 *  we will know whther the kth largest element is to the left or right of pivot or just itself. In average, this
-	 *  algorithm reduces the size of the problem by approximately one half after each partition, giving the 
-	 *  recurrence T(n) = T(n/2) + O(n) with O(n) being the time for partition. The solution is T(n) = O(n), which means 
-	 *  we have found an average linear-time solution. However, in the worst case, the recurrence will become 
-	 *  T(n) = T(n - 1) + O(n) and T(n) = O(n^2).
-	 */
-	// This is simpler than kthSmallestElementInArray32
-	public int kthSmallestElementInArray3(int[] nums, int k) {
-		if (nums.length == 0 || k == 0) return 0;
-
-		int l = 0, r = nums.length - 1;
-
-		while (l <= r) {
-			// Here 'm' is the partition index to split the array into two parts
-			int m = partition(nums, l, r);
-
-			if (k - 1 == m) return nums[m];
-			else if (k - 1 < m) r = m - 1;
-			else l = m + 1;
-		}
-
-		return -1;
-	}
-
-	/* Partition:
-	 * Left side elements are less than pivotIndex(i) and right side elements are greater than pivotIndex(i)
-	 * Use Partition to find the kth Smallest Element; 
-	 */
-	public int partition(int[] a, int left, int right) {
-		int i = left, j = left, pivot = a[right];
-		while (j < right) {
-			if (a[j] < pivot) {
-				Utils.swap(a, i, j);
-				i++;
-			}
-			j++;
-		}
-		Utils.swap(a, i, right);
-		return i;
-	}
 
 	/*
 	 * Kth Largest Element in an Array:
@@ -136,8 +48,7 @@ public class KthElementPatterns {
 		return nums[n - k];
 	}
 
-	/* 
-	2. Partition or Quick Select: Time: O(n) avg & O(n²) worst, Space: O(1) (in-place)
+	/* 2.Partition or Quick Select: Time: O(n) avg & O(n²) worst, Space: O(1) (in-place)
 	  - The partition subroutine of quicksort can also be used to solve this problem. 
 	  - In partition, we divide the array into elements>=pivot pivot elements<=pivot
 	  - Then, according to the index of pivot, we will know whther the kth largest element is to the left 
@@ -186,7 +97,7 @@ public class KthElementPatterns {
 		a[j] = temp;
 	}
 
-	// 3.Heap Approach-1: Time: O(n log n), Space: O(n)
+	// 3.Heap Approach-1(Using Max Binary Heap): Time: O(n log n), Space: O(n)
 	public int findKthLargest3(int[] nums, int k) {
 		if (nums.length == 0) return -1;
 
@@ -201,8 +112,8 @@ public class KthElementPatterns {
 		return !maxHeap.isEmpty() ? maxHeap.peek() : -1;
 	}
 
-	// 4.Heap Approach-2: Time: O(n log k), Space: O(k)
-	public int findKthLargest(int[] nums, int k) {
+	// 4.Heap Approach-2(Using Min Binary Heap): Time: O(n log k), Space: O(k)
+	public int findKthLargest4(int[] nums, int k) {
 		if (nums.length == 0) return -1;
 
 		Queue<Integer> minHeap = new PriorityQueue<>();
@@ -216,6 +127,93 @@ public class KthElementPatterns {
 		}
 
 		return !minHeap.isEmpty() ? minHeap.peek() : -1;
+	}
+
+	// Problem1: Kth Smallest Element in Unsorted Array
+	/* Find the kth Smallest element in an unsorted array. Note that it is the kth largest element in the sorted order,
+	 * not the kth distinct element.
+	 * Example 1: Input: [3,2,1,5,6,4] and k = 2; Output: 2
+	 */
+	//1.Using Sorting: Time: O(nlogn), Space: O(1) (in-place sort)
+	public int kthSmallestElementInArray1(int[] a, int k) {
+		Arrays.sort(a);
+		return a[k - 1];
+	}
+
+	// 2.Partition or Quick Select: Time: O(n) avg & O(n²) worst, Space: O(1) (in-place)
+	/*
+	 * Using Quick sort Partitioning or Quick Select: Expect Linear Time complexity: O(n) 
+	 * Kth Smallest/Largest Element in Unsorted Array -  
+	 *   Partition or Quick Select: The partition subroutine of quicksort can also be used to solve this problem. 
+	 *  In partition, we divide the array into elements>=pivot pivot elements<=pivot. Then, according to the index of pivot,
+	 *  we will know whther the kth largest element is to the left or right of pivot or just itself. In average, this
+	 *  algorithm reduces the size of the problem by approximately one half after each partition, giving the 
+	 *  recurrence T(n) = T(n/2) + O(n) with O(n) being the time for partition. The solution is T(n) = O(n), which means 
+	 *  we have found an average linear-time solution. However, in the worst case, the recurrence will become 
+	 *  T(n) = T(n - 1) + O(n) and T(n) = O(n^2).
+	 */
+	public int kthSmallestElementInArray2(int[] nums, int k) {
+		if (nums.length == 0 || k == 0) return 0;
+
+		int l = 0, r = nums.length - 1;
+
+		while (l <= r) {
+			// Here 'm' is the partition index to split the array into two parts
+			int m = partition(nums, l, r);
+
+			if (k - 1 == m) return nums[m];
+			else if (k - 1 < m) r = m - 1;
+			else l = m + 1;
+		}
+
+		return -1;
+	}
+
+	/* Partition:
+	 * Left side elements are less than pivotIndex(i) and right side elements are greater than pivotIndex(i)
+	 * Use Partition to find the kth Smallest Element; 
+	 */
+	public int partition(int[] a, int left, int right) {
+		int i = left, j = left, pivot = a[right];
+		while (j < right) {
+			if (a[j] < pivot) {
+				Utils.swap(a, i, j);
+				i++;
+			}
+			j++;
+		}
+		Utils.swap(a, i, right);
+		return i;
+	}
+
+	// 3.Heap Approach-1(Using Min Binary Heap): Time: O(n log n), Space: O(n)
+	public int kthSmallestElementInArray3(int[] arr, int k) {
+		PriorityQueue<Integer> queue = new PriorityQueue<>();
+		for (int i = 0; i < arr.length; i++) // O(nlogn)
+			queue.add(arr[i]);
+
+		for (int i = 0; i < k - 1; i++) // O(klogn) time
+			queue.remove();
+
+		return queue.peek();
+	}
+
+	// 4.Heap Approach-2(Using Max Binary Heap): Time: O(n log k), Space: O(k)
+	public int kthSmallestElementInArray4(int[] arr, int k) {
+		PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
+		for (int i = 0; i < arr.length; i++) {// O(nlogk) times
+			queue.add(arr[i]);
+			if (queue.size() > k) queue.poll();
+
+			//or below logic saves few add/remove operations, but both with O(nlogk) time
+			/*if (queue.isEmpty() || queue.size() < k) {
+				queue.add(arr[i]);
+			} else if (arr[i] < queue.peek()) {
+				queue.remove();
+				queue.add(arr[i]);
+			}*/
+		}
+		return queue.peek();
 	}
 
 	/*
