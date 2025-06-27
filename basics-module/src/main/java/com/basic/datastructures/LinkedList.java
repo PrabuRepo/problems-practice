@@ -449,12 +449,12 @@ class CircularSLinkedList implements SLLOperations {
 		if (isEmpty()) return false;
 
 		ListNode curr = head;
-		if (head.data == data && curr.next == head) {
+		if (head.data == data && curr.next == head) { // Head data matches and only Head data is present in the list
 			head = null;
-		} else if (head.data == data) {
+		} else if (head.data == data) { // Head data matches and more than one data present in the list
 			curr.data = curr.next.data;
 			curr.next = curr.next.next;
-		} else {
+		} else { // Data may present anywhere in the list 
 			do {
 				if (curr.next.data == data) {
 					curr.next = curr.next.next;
@@ -462,7 +462,7 @@ class CircularSLinkedList implements SLLOperations {
 				} else {
 					curr = curr.next;
 				}
-			} while (curr != head);
+			} while (curr != head); // This check is required to identify the end of the list and infinite looping
 		}
 		return false;
 	}

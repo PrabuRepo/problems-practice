@@ -21,12 +21,186 @@ public class Deque {
 }
 
 class DequeArrayImpl implements DequeOperations {
+	int[] deque;
+	int front, rear, size, capacity;
+
+	public DequeArrayImpl(int maxSize) {
+		deque = new int[maxSize];
+		front = 0;
+		rear = -1;
+		size = 0;
+		capacity = maxSize;
+	}
+
+	@Override
+	public void addFirst(int data) {
+		if (isFull()) return;
+		front = (front - 1 + capacity) % capacity;
+		deque[front] = data;
+		size++;
+	}
+
+	@Override
+	public void addLast(int data) {
+		if (isFull()) return;
+		rear = (rear + 1) % capacity;
+		deque[rear] = data;
+		size++;
+	}
+
+	@Override
+	public int removeFirst() {
+		if (isEmpty()) return -1;
+		int element = getFirst();
+		front = (front + 1) % capacity;
+		size--;
+		return element;
+	}
+
+	@Override
+	public int removeLast() {
+		if (isEmpty()) return -1;
+		int element = getLast();
+		rear = (rear - 1 + capacity) % capacity;
+		size--;
+		return element;
+	}
+
+	@Override
+	public int getFirst() {
+		//front is initialized with 0, so there is no chance of wrong index and answer
+		// Eg: If one element is added in the last, then call the getFirst(). It suppose to return rear element from 0th index
+		return isEmpty() ? -1 : deque[front];
+	}
+
+	@Override
+	public int getLast() {
+		//rear is initialized with -1, so there is a chance of -ve index and index out of bound exception
+		// Eg: If one element is added in the front, then call the getLast(). It suppose to return front element from Capacity-1 th index
+		return isEmpty() ? -1 : deque[(rear + capacity) % capacity];
+
+	}
+
+	@Override
+	public void print() {
+		if (isEmpty()) return;
+		for (int i = 0; i < capacity; i++)
+			System.out.print(deque[i] + " ");
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return front == -1 && rear == -1 ? true : false;
+	}
+
+	public boolean isFull() {
+		return (size == capacity);
+	}
+
+	@Override
+	public void add(int data) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void set(int index, int data) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean contains(int data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean remove(int data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public static void main(String[] args) {
+
+		Scanner in = new Scanner(System.in);
+		char ch;
+		DequeArrayImpl queue = new DequeArrayImpl(6);
+		do {
+			System.out.println("Double Ended Queue Operations:");
+			System.out.println("1.Insert Front");
+			System.out.println("2.Insert Rear");
+			System.out.println("3.Delete Front");
+			System.out.println("4.Delete Rear");
+			System.out.println("5.Front element");
+			System.out.println("6.Rear element");
+			System.out.print("Enter option:");
+			switch (in.nextInt()) {
+			case 1:
+				System.out.println("Enter no of elements to be inserted:");
+				int t = in.nextInt();
+				while (t-- > 0) {
+					queue.addFirst(in.nextInt());
+				}
+				System.out.println("Elements are inserted in front!");
+				break;
+			case 2:
+				System.out.println("Enter no of elements to be inserted:");
+				t = in.nextInt();
+				while (t-- > 0) {
+					queue.addLast(in.nextInt());
+				}
+				System.out.println("Elements are inserted in rear!");
+				break;
+			case 3:
+				int data = queue.removeFirst();
+				if (data != -1) System.out.println("Dequeued front element is: " + data);
+				else System.out.println("Queue is empty");
+				break;
+			case 4:
+				data = queue.removeLast();
+				if (data != -1) System.out.println("Dequeued rear element is: " + data);
+				else System.out.println("Queue is empty");
+				break;
+			case 5:
+				data = queue.getFirst();
+				if (data != -1) System.out.println("Front element is: " + data);
+				else System.out.println("Queue is empty");
+				break;
+			case 6:
+				data = queue.getLast();
+				if (data != -1) System.out.println("Rear element is: " + data);
+				else System.out.println("Queue is empty");
+				break;
+			default:
+				System.out.println("Please enter the valid option!!!");
+				break;
+			}
+
+			System.out.println("\nDisplay:");
+			queue.print();
+			System.out.println("\nDo you want to continue(y/n):");
+			ch = in.next().charAt(0);
+		} while (ch == 'y' || ch == 'Y');
+		System.out.println("****Thank You******");
+		in.close();
+	}
+
+}
+
+class DequeArrayImpl2 implements DequeOperations {
 	int[] queue;
 	int front, rear;
 	int maxSize;
 	int currSize;
 
-	public DequeArrayImpl(int maxSize) {
+	public DequeArrayImpl2(int maxSize) {
 		queue = new int[maxSize];
 		Arrays.fill(queue, -1);
 		this.maxSize = maxSize;
@@ -159,71 +333,6 @@ class DequeArrayImpl implements DequeOperations {
 	public int size() {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	public static void main(String[] args) {
-
-		Scanner in = new Scanner(System.in);
-		char ch;
-		DequeArrayImpl queue = new DequeArrayImpl(6);
-		do {
-			System.out.println("Double Ended Queue Operations:");
-			System.out.println("1.Insert Front");
-			System.out.println("2.Insert Rear");
-			System.out.println("3.Delete Front");
-			System.out.println("4.Delete Rear");
-			System.out.println("5.Front element");
-			System.out.println("6.Rear element");
-			System.out.print("Enter option:");
-			switch (in.nextInt()) {
-			case 1:
-				System.out.println("Enter no of elements to be inserted:");
-				int t = in.nextInt();
-				while (t-- > 0) {
-					queue.addFirst(in.nextInt());
-				}
-				System.out.println("Elements are inserted in front!");
-				break;
-			case 2:
-				System.out.println("Enter no of elements to be inserted:");
-				t = in.nextInt();
-				while (t-- > 0) {
-					queue.addLast(in.nextInt());
-				}
-				System.out.println("Elements are inserted in rear!");
-				break;
-			case 3:
-				int data = queue.removeFirst();
-				if (data != -1) System.out.println("Dequeued front element is: " + data);
-				else System.out.println("Queue is empty");
-				break;
-			case 4:
-				data = queue.removeLast();
-				if (data != -1) System.out.println("Dequeued rear element is: " + data);
-				else System.out.println("Queue is empty");
-				break;
-			case 5:
-				data = queue.getFirst();
-				if (data != -1) System.out.println("Front element is: " + data);
-				else System.out.println("Queue is empty");
-				break;
-			case 6:
-				data = queue.getLast();
-				if (data != -1) System.out.println("Rear element is: " + data);
-				else System.out.println("Queue is empty");
-				break;
-			default:
-				System.out.println("Please enter the valid option!!!");
-				break;
-			}
-
-			System.out.println("\nDisplay:");
-			queue.print();
-			System.out.println("\nDo you want to continue(y/n):");
-			ch = in.next().charAt(0);
-		} while (ch == 'y' || ch == 'Y');
-		System.out.println("****Thank You******");
-		in.close();
 	}
 
 }

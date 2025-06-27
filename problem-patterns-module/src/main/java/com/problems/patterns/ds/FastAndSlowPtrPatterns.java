@@ -293,9 +293,34 @@ public class FastAndSlowPtrPatterns {
 		return tortoise;
 	}
 
-	// Middle of the LinkedList (easy)
-	//Approach1: For getting first mid element in the even size of LL; i.e. fastPtr.next != null
+	/* Middle of the LinkedList (easy)
+	 * 
+	 * Approach 1: Brute Force — Count Nodes First, Then Iterate Again
+	 * Approach 2: Optimal — Fast and Slow Pointers
+	 */
+
+	//Approach 1: Brute Force — Count Nodes First, Then Iterate Again
+	// Time: O(n), Space: O(1). But two passes
 	public ListNode middleNode1(ListNode head) {
+		int count = 0;
+		ListNode temp = head;
+		while (temp != null) {
+			count++;
+			temp = temp.next;
+		}
+
+		int mid = count / 2;
+		temp = head;
+		for (int i = 0; i < mid; i++) {
+			temp = temp.next;
+		}
+
+		return temp;
+	}
+
+	// Approach 2: Optimal — Fast and Slow Pointers: Time: O(n), Space: O(1)
+	// Note: For getting second mid element in the even size of LL; i.e. fastPtr.next != null
+	public ListNode middleNode21(ListNode head) {
 		ListNode slowPtr = head, fastPtr = head;
 		while (fastPtr != null && fastPtr.next != null) {
 			slowPtr = slowPtr.next;
@@ -304,8 +329,9 @@ public class FastAndSlowPtrPatterns {
 		return slowPtr;
 	}
 
-	//Approach2: For getting second mid element in the even size of LLl i.e. fastPtr.next.next != null
-	public ListNode middleNode2(ListNode head) {
+	// Approach 2: Optimal — Fast and Slow Pointers: Time: O(n), Space: O(1)
+	// Note: For getting first mid element in the even size of LLl i.e. fastPtr.next.next != null
+	public ListNode middleNode22(ListNode head) {
 		if (head == null) return null;
 		ListNode slowPtr = head, fastPtr = head;
 		while (fastPtr.next != null && fastPtr.next.next != null) {

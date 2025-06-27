@@ -129,10 +129,9 @@ class StackSLinkedListImpl implements StackOperations {
 	@Override
 	public void push(int data) {
 		ListNode newNode = new ListNode(data);
-		if (stack == null) {
-			stack = newNode;
-		} else {
+		if (stack != null) {
 			newNode.next = stack;
+		} else {
 			stack = newNode;
 		}
 	}

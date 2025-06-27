@@ -39,14 +39,149 @@ public class CircularQueue {
  * 	CPU Scheduling: Operating systems often maintain a queue of processes that are ready to execute or that are waiting
  * 	for a particular event to occur.
  */
+
 class CircularQueueArrayImpl implements QueueOperations {
+	private int front, rear, size, capacity;
+	private int[] queue;
+
+	public CircularQueueArrayImpl(int k) {
+		rear = -1;
+		front = 0;
+		size = 0;
+		capacity = k;
+		queue = new int[k];
+		Arrays.fill(queue, -1);
+	}
+
+	@Override
+	public void add(int data) {
+		if (isFull()) return;
+
+		rear = (rear + 1) % capacity;
+		queue[rear] = data;
+		size++;
+	}
+
+	@Override
+	public int poll() {
+		if (isEmpty()) return -1;
+
+		int element = peek();
+		front = (front + 1) % capacity;
+		size--;
+		return element;
+	}
+
+	@Override
+	public int peek() {
+		return isEmpty() ? -1 : queue[front];
+	}
+
+	public int getRear() {
+		return isEmpty() ? -1 : queue[rear];
+	}
+
+	public boolean isFull() {
+		return size == capacity;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	@Override
+	public void set(int index, int data) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean contains(int data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean remove(int data) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void print() {
+		if (isEmpty()) {
+			System.out.println("Queue is empty!");
+		} else if (front <= rear) { // Normal Case: Print from front to rear
+			for (int i = front; i <= rear; i++)
+				System.out.print(queue[i] + " ");
+		} else { // Rear moved to place front side and front is placed in rear side
+			for (int i = front; i < queue.length; i++)
+				System.out.print(queue[i] + " ");
+			for (int i = 0; i <= rear; i++)
+				System.out.print(queue[i] + " ");
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		char ch;
+		CircularQueueArrayImpl queue = new CircularQueueArrayImpl(6);
+		do {
+			System.out.println("Circular Queue Operations:");
+			System.out.println("1.Enqueue");
+			System.out.println("2.Dequeue");
+			System.out.println("3.Front");
+			System.out.print("Enter option:");
+			switch (in.nextInt()) {
+			case 1:
+				System.out.println("Enter no of elements to be inserted:");
+				int t = in.nextInt();
+				while (t-- > 0) {
+					queue.add(in.nextInt());
+				}
+				System.out.println("Elements are inserted!");
+				break;
+			case 2:
+				int data = queue.poll();
+				if (data != -1) System.out.println("Dequeued element is: " + data);
+				else System.out.println("Queue is empty");
+				break;
+			case 3:
+				data = queue.peek();
+				if (data != -1) System.out.println("Front element is: " + data);
+				else System.out.println("Queue is empty");
+				break;
+			default:
+				System.out.println("Please enter the valid option!!!");
+				break;
+
+			}
+
+			System.out.println("\nDisplay:");
+			queue.print();
+			System.out.println("\nDo you want to continue(y/n):");
+			ch = in.next().charAt(0);
+		} while (ch == 'y' || ch == 'Y');
+		System.out.println("****Thank You******");
+		in.close();
+	}
+}
+
+class CircularQueueArrayImpl2 implements QueueOperations {
 
 	int[] queue;
 	int front;
 	int rear;
 	int maxSize;
 
-	public CircularQueueArrayImpl(int size) {
+	public CircularQueueArrayImpl2(int size) {
 		this.maxSize = size;
 		this.queue = new int[maxSize];
 		Arrays.fill(queue, -1);
@@ -145,138 +280,6 @@ class CircularQueueArrayImpl implements QueueOperations {
 		return 0;
 	}
 
-	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
-		char ch;
-		CircularQueueArrayImpl queue = new CircularQueueArrayImpl(6);
-		do {
-			System.out.println("Circular Queue Operations:");
-			System.out.println("1.Enqueue");
-			System.out.println("2.Dequeue");
-			System.out.println("3.Front");
-			System.out.print("Enter option:");
-			switch (in.nextInt()) {
-			case 1:
-				System.out.println("Enter no of elements to be inserted:");
-				int t = in.nextInt();
-				while (t-- > 0) {
-					queue.add(in.nextInt());
-				}
-				System.out.println("Elements are inserted!");
-				break;
-			case 2:
-				int data = queue.poll();
-				if (data != -1) System.out.println("Dequeued element is: " + data);
-				else System.out.println("Queue is empty");
-				break;
-			case 3:
-				data = queue.peek();
-				if (data != -1) System.out.println("Front element is: " + data);
-				else System.out.println("Queue is empty");
-				break;
-			default:
-				System.out.println("Please enter the valid option!!!");
-				break;
-
-			}
-
-			System.out.println("\nDisplay:");
-			queue.print();
-			System.out.println("\nDo you want to continue(y/n):");
-			ch = in.next().charAt(0);
-		} while (ch == 'y' || ch == 'Y');
-		System.out.println("****Thank You******");
-		in.close();
-	}
-}
-
-class CircularQueueArrayImpl2 implements QueueOperations {
-	private int front, rear, currSize;
-	private int[] queue;
-
-	public CircularQueueArrayImpl2(int k) {
-		rear = -1;
-		front = 0;
-		currSize = 0;
-		queue = new int[k];
-		Arrays.fill(queue, -1);
-	}
-
-	@Override
-	public void add(int data) {
-		if (isFull()) return;
-
-		rear = (rear + 1) % queue.length;
-		queue[rear] = data;
-		currSize++;
-	}
-
-	@Override
-	public int poll() {
-		if (isEmpty()) return -1;
-
-		int element = queue[front];
-		front = (front + 1) % queue.length;
-		currSize--;
-		return element;
-	}
-
-	@Override
-	public int peek() {
-		return isEmpty() ? -1 : queue[front];
-	}
-
-	public int getRear() {
-		return isEmpty() ? -1 : queue[rear];
-	}
-
-	public boolean isFull() {
-		return currSize == queue.length;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return currSize == 0;
-	}
-
-	@Override
-	public void set(int index, int data) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean contains(int data) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean remove(int data) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void print() {
-		if (isEmpty()) {
-			System.out.println("Queue is empty!");
-		} else if (front <= rear) { // Normal Case: Print from front to rear
-			for (int i = front; i <= rear; i++)
-				System.out.print(queue[i] + " ");
-		} else { // Rear moved to place front side and front is placed in rear side
-			for (int i = front; i < queue.length; i++)
-				System.out.print(queue[i] + " ");
-			for (int i = 0; i <= rear; i++)
-				System.out.print(queue[i] + " ");
-		}
-	}
 }
 
 class CircularQueueSLLImpl implements QueueOperations {
